@@ -1,15 +1,15 @@
 import { getConnection } from "./../database/database"
 
-const getProductos = async (req, res) => {
+const getproductos = async (req, res) => {
     try {
         const connection = await getConnection()
         await connection.query("USE techstore")
 
-        const result = await connection.query("SELECT * FROM productos")
+        const result = await connection.query("SELECT * FROM producto")
         console.log(result)
         res.json(result)
     } catch (error) {
-        console.error("Error al obtener productos:", error.message); // Loggea el error para diagnóstico
+        console.error("Error al obtener producto:", error.message); // Loggea el error para diagnóstico
         res.status(500).send(error.message)
     }
 }
@@ -27,7 +27,7 @@ const updateProducto = async (req, res) => {
         await connection.query("USE techstore");
 
         const result = await connection.query(
-            "UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, cantidad_en_stock = ?, categoria_id = ? WHERE producto_id = ?",
+            "UPDATE producto SET nombre = ?, descripcion = ?, precio = ?, cantidad_en_stock = ?, categoria_id = ? WHERE producto_id = ?",
             [nombre, descripcion, precio, cantidad_en_stock, categoria_id, id]
         );
 
@@ -43,7 +43,7 @@ const delProducto = async (req, res) => {
         const { id } = req.params;
         const connection = await getConnection()
         await connection.query("USE techstore")
-        const result = await connection.query("DELETE FROM productos WHERE producto_id = ?", [id]);
+        const result = await connection.query("DELETE FROM producto WHERE producto_id = ?", [id]);
         res.status(200).json({ "message": "Delete user ok" })
     } catch (error) {
         res.status(500)
@@ -57,7 +57,7 @@ const getProducto = async (req, res) => {
         const connection = await getConnection();
         await connection.query("USE techstore")
 
-        const result = await connection.query("SELECT * from productos WHERE producto_id = ?", [id]);
+        const result = await connection.query("SELECT * from producto WHERE producto_id = ?", [id]);
         console.log(result);
         res.json(result)
     } catch (error) {
@@ -81,7 +81,7 @@ const addProducto = async (req, res) => {
 
         // Ejecutar la consulta SQL para insertar un nuevo producto
         const result = await connection.query(
-            `INSERT INTO productos (nombre, descripcion, precio, cantidad_en_stock, categoria_id) 
+            `INSERT INTO producto (nombre, descripcion, precio, cantidad_en_stock, categoria_id) 
                 VALUES (?, ?, ?, ?, ?)`,
             [nombre, descripcion, precio, cantidad_en_stock, categoria_id]
         );
@@ -95,6 +95,6 @@ const addProducto = async (req, res) => {
 };
 
 export const methods = {
-    getProductos, updateProducto, delProducto, getProducto, addProducto
+    getproductos, updateProducto, delProducto, getProducto, addProducto
 
 }

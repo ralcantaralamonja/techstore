@@ -5,10 +5,9 @@ const addDetalleOrden = async (req, res) => {
     try {
         const { orden_id, producto_id, cantidad, precio } = req.body;
         const connection = await getConnection();
-        await connection.query("USE techstore");
 
         const result = await connection.query(
-            "INSERT INTO detalles_ordenes (orden_id, producto_id, cantidad, precio) VALUES (?, ?, ?, ?)",
+            "INSERT INTO detalles_orden (orden_id, producto_id, cantidad, precio) VALUES (?, ?, ?, ?)",
             [orden_id, producto_id, cantidad, precio]
         );
 
@@ -25,9 +24,9 @@ const getDetallesOrden = async (req, res) => {
         const { orden_id } = req.params;
         const connection = await getConnection();
         await connection.query("USE techstore");
-
         const result = await connection.query(
-            "SELECT * FROM detalles_ordenes WHERE orden_id = ?",
+            
+            "SELECT * FROM detalles_orden WHERE orden_id = ?",
             [orden_id]
         );
 
@@ -38,25 +37,21 @@ const getDetallesOrden = async (req, res) => {
     }
 };
 
-
-const getOrdens = async (req, res) => {
+// Obtener todos los detalles de órdenes
+const getDetallesOrdenes = async (req, res) => {
     try {
-        const { orden_id } = req.params;
         const connection = await getConnection();
         await connection.query("USE techstore");
-
         const result = await connection.query(
-            "SELECT * FROM detalles_ordenes "
-
+            "SELECT * FROM detalles_orden"
         );
 
         res.json(result);
     } catch (error) {
-        console.error("Error al obtene:", error.message);
+        console.error("Error al obtener detalles de órdenes:", error.message);
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
-
 
 // Actualizar detalle de orden
 const updateDetalleOrden = async (req, res) => {
@@ -65,10 +60,9 @@ const updateDetalleOrden = async (req, res) => {
         const { cantidad, precio } = req.body;
         const connection = await getConnection();
         await connection.query("USE techstore");
-
         const result = await connection.query(
-            "UPDATE detalles_ordenes SET cantidad = ?, precio = ? WHERE detalle_id = ?",
-            [cantidad, precio, id]
+            "UPDATE detalles_orden SET cantidad = ?, precio = ? WHERE orden_id = ? AND producto_id = ?",
+            [cantidad, precio, req.body.orden_id, req.body.producto_id]
         );
 
         res.status(200).json({ message: "Detalle de orden actualizado correctamente" });
@@ -84,10 +78,9 @@ const deleteDetalleOrden = async (req, res) => {
         const { id } = req.params;
         const connection = await getConnection();
         await connection.query("USE techstore");
-
         const result = await connection.query(
-            "DELETE FROM detalles_ordenes WHERE detalle_id = ?",
-            [id]
+            "DELETE FROM detalles_orden WHERE orden_id = ? AND producto_id = ?",
+            [req.body.orden_id, req.body.producto_id]
         );
 
         res.status(200).json({ message: "Detalle de orden eliminado correctamente" });
@@ -100,7 +93,7 @@ const deleteDetalleOrden = async (req, res) => {
 export const methods = {
     addDetalleOrden,
     getDetallesOrden,
+    getDetallesOrdenes,
     updateDetalleOrden,
-    deleteDetalleOrden,
-    getOrdens
+    deleteDetalleOrden
 };

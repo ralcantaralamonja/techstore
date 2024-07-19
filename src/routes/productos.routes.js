@@ -3,7 +3,7 @@ import { methods as productosController } from "./../controllers/productos"
 
 const router = Router()
 
-router.get("/api/productos", productosController.getProductos)
+router.get("/api/productos", productosController.getproductos)
 router.get("/api/productos/:id", productosController.getProducto)
 router.post("/api/productos", productosController.addProducto)
 router.delete("/api/productos/:id", productosController.delProducto)

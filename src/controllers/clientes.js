@@ -1,16 +1,16 @@
 import { getConnection } from "./../database/database";
 
-// Obtener todos los clientes
-const getClientes = async (req, res) => {
+// Obtener todos los cliente
+const getclientes = async (req, res) => {
     try {
         const connection = await getConnection();
         await connection.query("USE techstore");
 
-        const clientes = await connection.query("SELECT * FROM clientes");
+        const cliente = await connection.query("SELECT * FROM cliente");
 
-        res.status(200).json(clientes);
+        res.status(200).json(cliente);
     } catch (error) {
-        console.error("Error al obtener clientes:", error.message);
+        console.error("Error al obtener cliente:", error.message);
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
@@ -21,7 +21,7 @@ const getCliente = async (req, res) => {
         const connection = await getConnection();
         await connection.query("USE techstore");
 
-        const result = await connection.query("SELECT * FROM clientes WHERE cliente_id = ?", [id]);
+        const result = await connection.query("SELECT * FROM cliente WHERE cliente_id = ?", [id]);
         console.log(result);
         res.json(result);
     } catch (error) {
@@ -43,7 +43,7 @@ const addCliente = async (req, res) => {
         await connection.query("USE techstore");
 
         const result = await connection.query(
-            "INSERT INTO clientes (nombre, email, telefono, direccion_envio) VALUES (?, ?, ?, ?)",
+            "INSERT INTO cliente (nombre, email, telefono, direccion_envio) VALUES (?, ?, ?, ?)",
             [nombre, email, telefono, direccion_envio]
         );
 
@@ -68,7 +68,7 @@ const updateCliente = async (req, res) => {
         await connection.query("USE techstore");
 
         const result = await connection.query(
-            "UPDATE clientes SET nombre = ?, email = ?, telefono = ?, direccion_envio = ? WHERE cliente_id = ?",
+            "UPDATE cliente SET nombre = ?, email = ?, telefono = ?, direccion_envio = ? WHERE cliente_id = ?",
             [nombre, email, telefono, direccion_envio, id]
         );
 
@@ -86,7 +86,7 @@ const delCliente = async (req, res) => {
         const connection = await getConnection();
         await connection.query("USE techstore");
 
-        const result = await connection.query("DELETE FROM clientes WHERE cliente_id = ?", [id]);
+        const result = await connection.query("DELETE FROM cliente WHERE cliente_id = ?", [id]);
         res.status(200).json({ message: "Cliente eliminado correctamente" });
     } catch (error) {
         console.error("Error al eliminar cliente:", error.message);
@@ -95,5 +95,5 @@ const delCliente = async (req, res) => {
 };
 
 export const methods = {
-    getClientes, getCliente, addCliente, updateCliente, delCliente
+    getclientes, getCliente, addCliente, updateCliente, delCliente
 };

@@ -1,12 +1,12 @@
 import { getConnection } from "./../database/database";
 
 // Obtener todas las categorías
-const getCategorias = async (req, res) => {
+const getcategorias = async (req, res) => {
     try {
         const connection = await getConnection();
         await connection.query("USE techstore");
-
-        const result = await connection.query("SELECT * FROM categorias");
+                                    
+        const result = await connection.query("SELECT * FROM categoria");
         console.log(result);
         res.json(result);
     } catch (error) {
@@ -22,7 +22,7 @@ const getCategoria = async (req, res) => {
         const connection = await getConnection();
         await connection.query("USE techstore");
 
-        const result = await connection.query("SELECT * FROM categorias WHERE categoria_id = ?", [id]);
+        const result = await connection.query("SELECT * FROM categoria WHERE categoria_id = ?", [id]);
         console.log(result);
         res.json(result);
     } catch (error) {
@@ -44,7 +44,7 @@ const addCategoria = async (req, res) => {
         await connection.query("USE techstore");
 
         const result = await connection.query(
-            "INSERT INTO categorias (nombre, descripcion) VALUES (?, ?)",
+            "INSERT INTO categoria (nombre, descripcion) VALUES (?, ?)",
             [nombre, descripcion]
         );
 
@@ -69,7 +69,7 @@ const updateCategoria = async (req, res) => {
         await connection.query("USE techstore");
 
         const result = await connection.query(
-            "UPDATE categorias SET nombre = ?, descripcion = ? WHERE categoria_id = ?",
+            "UPDATE categoria SET nombre = ?, descripcion = ? WHERE categoria_id = ?",
             [nombre, descripcion, id]
         );
 
@@ -87,7 +87,7 @@ const delCategoria = async (req, res) => {
         const connection = await getConnection();
         await connection.query("USE techstore");
 
-        const result = await connection.query("DELETE FROM categorias WHERE categoria_id = ?", [id]);
+        const result = await connection.query("DELETE FROM categoria WHERE categoria_id = ?", [id]);
         res.status(200).json({ message: "Categoría eliminada correctamente" });
     } catch (error) {
         console.error("Error al eliminar categoría:", error.message);
@@ -96,5 +96,5 @@ const delCategoria = async (req, res) => {
 };
 
 export const methods = {
-    getCategorias, getCategoria, addCategoria, updateCategoria, delCategoria
+    getcategorias, getCategoria, addCategoria, updateCategoria, delCategoria
 };

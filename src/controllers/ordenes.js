@@ -1,12 +1,12 @@
 import { getConnection } from "./../database/database";
 
 
-const getOrdenes = async (req, res) => {
+const getordenes = async (req, res) => {
     try {
         const connection = await getConnection();
         await connection.query("USE techstore");
 
-        const result = await connection.query("SELECT * FROM ordenes");
+        const result = await connection.query("SELECT * FROM ordene");
         console.log(result);
         res.json(result);
     } catch (error) {
@@ -22,7 +22,7 @@ const getOrden = async (req, res) => {
         const connection = await getConnection();
         await connection.query("USE techstore");
 
-        const result = await connection.query("SELECT * FROM ordenes WHERE orden_id = ?", [id]);
+        const result = await connection.query("SELECT * FROM ordene WHERE orden_id = ?", [id]);
         console.log(result);
         res.json(result);
     } catch (error) {
@@ -44,7 +44,7 @@ const addOrden = async (req, res) => {
         await connection.query("USE techstore");
 
         const result = await connection.query(
-            "INSERT INTO ordenes (cliente_id, fecha, total, estado) VALUES (?, ?, ?, ?)",
+            "INSERT INTO ordene (cliente_id, fecha, total, estado) VALUES (?, ?, ?, ?)",
             [cliente_id, fecha, total, estado]
         );
 
@@ -69,7 +69,7 @@ const updateOrden = async (req, res) => {
         await connection.query("USE techstore");
 
         const result = await connection.query(
-            "UPDATE ordenes SET cliente_id = ?, fecha = ?, total = ?, estado = ? WHERE orden_id = ?",
+            "UPDATE ordene SET cliente_id = ?, fecha = ?, total = ?, estado = ? WHERE orden_id = ?",
             [cliente_id, fecha, total, estado, id]
         );
 
@@ -87,7 +87,7 @@ const delOrden = async (req, res) => {
         const connection = await getConnection();
         await connection.query("USE techstore");
 
-        const result = await connection.query("DELETE FROM ordenes WHERE orden_id = ?", [id]);
+        const result = await connection.query("DELETE FROM ordene WHERE orden_id = ?", [id]);
         res.status(200).json({ message: "Orden eliminada correctamente" });
     } catch (error) {
         console.error("Error al eliminar orden:", error.message);
@@ -96,5 +96,5 @@ const delOrden = async (req, res) => {
 };
 
 export const methods = {
-    getOrdenes, getOrden, addOrden, updateOrden, delOrden
+    getordenes, getOrden, addOrden, updateOrden, delOrden
 };
