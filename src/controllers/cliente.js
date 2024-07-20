@@ -1,85 +1,81 @@
 import { getConnection } from "./../database/database";
 
-// Get all clients
+// Obtener todos los clientes
 const getClientes = async (req, res) => {
     try {
         const connection = await getConnection();
-        const result = await connection.query("SELECT * from cliente");
-        console.log(result);
+        const result = await connection.query("SELECT * FROM cliente");
+        if (result.length === 0) return res.status(404).json({ message: "No se encontraron clientes." });
         res.json(result);
     } catch (error) {
-        res.status(500);
-        res.send(error.message);
+        res.status(500).send(error.message);
     }
 };
 
-// Get client by ID
+// Obtener un cliente por su ID
 const getCliente = async (req, res) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
         const connection = await getConnection();
-        const result = await connection.query("SELECT * from cliente WHERE idcliente = ?", id);
-        console.log(result);
-        res.json(result);
+        const result = await connection.query("SELECT * FROM cliente WHERE idcliente = ?", [id]);
+        if (result.length === 0) return res.status(404).json({ message: "Cliente no encontrado." });
+        res.json(result[0]);
     } catch (error) {
-        res.status(500);
-        res.send(error.message);
+        res.status(500).send(error.message);
     }
 };
 
-// Add a new client
+// Agregar un nuevo cliente
 const addCliente = async (req, res) => {
     try {
         const { nombre, email, telefono, direccion } = req.body;
-        
-        if (nombre === undefined || email === undefined || telefono === undefined || direccion === undefined) {
-            res.status(400).json({ "message": "Bad Request. Please fill all fields." });
+
+        if (!nombre || !email || !telefono || !direccion) {
+            return res.status(400).json({ message: "Bad Request. Please fill all fields." });
         }
 
         const connection = await getConnection();
-        const result = await connection.query(`INSERT INTO cliente (nombre, email, telefono, direccion)
-                                                VALUES ('${nombre}', '${email}', '${telefono}', '${direccion}')`);
-        res.json({ "message": "Cliente Registrado Correctamente" });
+        await connection.query('INSERT INTO cliente (nombre, email, telefono, direccion) VALUES (?, ?, ?, ?)', [nombre, email, telefono, direccion]);
+        res.json({ message: "Cliente Registrado Correctamente" });
         
     } catch (error) {
-        res.status(500);
-        res.send(error.message);
+        res.status(500).send(error.message);
     }
 };
 
-// Update an existing client
+// Actualizar un cliente existente
 const updateCliente = async (req, res) => {
     try {
         const { id, nombre, email, telefono, direccion } = req.body;
-        if (id === undefined || nombre === undefined || email === undefined || telefono === undefined || direccion === undefined) {
-            res.status(400).json({ "message": "Bad Request. Please fill all fields." });
+
+        if (!id || !nombre || !email || !telefono || !direccion) {
+            return res.status(400).json({ message: "Bad Request. Please fill all fields." });
         }
+
         const connection = await getConnection();
-        const result = await connection.query(`UPDATE cliente SET nombre = '${nombre}', 
-                                                email = '${email}', 
-                                                telefono = '${telefono}', 
-                                                direccion = '${direccion}' 
-                                                WHERE idcliente = '${id}'`);
-        res.status(200).json({ "message": "Cliente Actualizado Correctamente" });
+        const result = await connection.query('UPDATE cliente SET nombre = ?, email = ?, telefono = ?, direccion = ? WHERE idcliente = ?', [nombre, email, telefono, direccion, id]);
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente no encontrado." });
+        res.json({ message: "Cliente Actualizado Correctamente" });
     } catch (error) {
-        res.status(500);
-        res.send(error.message);
+        res.status(500).send(error.message);
     }
 };
 
-// Delete a client
+// Eliminar un cliente
 const delCliente = async (req, res) => {
     try {
         const { id } = req.body;
-        if (id === undefined) {
-            res.status(400).json({ "message": "Bad Request. Please provide an id." });
+
+        if (!id) {
+            return res.status(400).json({ message: "Bad Request. Please provide an id." });
         }
+
         const connection = await getConnection();
-        const result = await connection.query("DELETE FROM cliente WHERE idcliente = ?", id);
-        res.status(200).json({ "message": "Cliente Eliminado Correctamente" });
+        const result = await connection.query('DELETE FROM cliente WHERE idcliente = ?', [id]);
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente no encontrado." });
+        res.json({ message: "Cliente Eliminado Correctamente" });
     } catch (error) {
-        res.status(500);
-        res.send(error.message);
+        res.status(500).send(error.message);
     }
 };
 
