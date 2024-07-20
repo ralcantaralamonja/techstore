@@ -1,11 +1,10 @@
-import { config } from "dotenv"
+import {config} from "dotenv"
 
-config()
+config();
 
 export default {
-
     host: process.env.HOST || "",
-    databasa: process.env.DATABASE || "",
-    user: process.env.USER || "",
-    password: process.env.PASSWORD || ""
-}
+    database: process.env.DATABASE || "",
+    user: process.env.user || "",
+    password: process.env.PASSWORD || "",
+};

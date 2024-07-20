@@ -1,24 +1,29 @@
 import express from "express";
-import morgan from "morgan";
+import morgan from "morgan"
+import product from "./routes/producto.routes";
+import client from "./routes/cliente.routes";
+import order from "./routes/orden.routes";
+import category from "./routes/categoria.routes";
+import auth from "./routes/login";
+import user from "./routes/register";
 import cors from "cors";
-import productos from "./routes/productos.routes";
-import categorias from "./routes/categorias.routes";
-import clientes from "./routes/clientes.routes";
-import ordenes from "./routes/ordenes.routes";
-import detallesOrdenesRouter from "./routes/detalles_ordenes.routes";
 
 const app = express();
 
-app.set("port", 3000);
+//Settings
+app.set("port",3000);
 
+//Middlewares
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
 
-app.use(productos);
-app.use(categorias);
-app.use(ordenes);
-app.use(clientes);
-app.use(detallesOrdenesRouter)
+//Routes
+app.use(product);
+app.use(client);
+app.use(order);
+app.use(category);
+app.use(auth);
+app.use(user);
 
 export default app;
