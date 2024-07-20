@@ -17,7 +17,6 @@ describe('Producto Controller', () => {
 
     // Prueba para obtener todos los productos
     test('should get all products', async () => {
-        // Mock de la respuesta de la base de datos
         const mockProducts = [{ idproducto: 1, Producto: 'Test Product', descripcion: 'Test description', Categoria: 'Test Category', stock: 10, precio: 100.0 }];
         jest.spyOn(productoController, 'getProductos').mockImplementation((req, res) => res.json(mockProducts));
 
@@ -25,6 +24,7 @@ describe('Producto Controller', () => {
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
         expect(response.body[0]).toHaveProperty('idproducto');
+        expect(response.body[0]).toHaveProperty('Producto', 'Test Product');
     });
 
     // Prueba para obtener un producto por ID
@@ -35,12 +35,15 @@ describe('Producto Controller', () => {
         const response = await request(app).get('/producto/1'); // Cambiado para usar `:id`
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('idproducto');
+        expect(response.body).toHaveProperty('Producto', 'Test Product');
     });
 
     // Prueba para agregar un nuevo producto
     test('should add a new product', async () => {
-        const mockInsertResult = { insertId: 1 };
-        jest.spyOn(productoController, 'addProducto').mockImplementation((req, res) => res.status(201).json({ message: "Producto Registrado Correctamente", idproducto: mockInsertResult.insertId }));
+        const mockInsertResult = { insertId: 12 }; // Ajusta aquí
+        jest.spyOn(productoController, 'addProducto').mockImplementation((req, res) => 
+            res.status(201).json({ message: "Producto Registrado Correctamente", idproducto: mockInsertResult.insertId })
+        );
 
         const response = await request(app).post('/producto').send({
             nombre: 'Test Product',
@@ -52,15 +55,17 @@ describe('Producto Controller', () => {
 
         expect(response.status).toBe(201);
         expect(response.body).toHaveProperty('message', 'Producto Registrado Correctamente');
-        expect(response.body).toHaveProperty('idproducto', 1);
-
+        expect(response.body).toHaveProperty('idproducto', mockInsertResult.insertId);
+        
         // Guarda el ID del producto creado para usar en pruebas posteriores
         createdProductId = response.body.idproducto;
     });
 
     // Prueba para actualizar un producto existente
     test('should update an existing product', async () => {
-        jest.spyOn(productoController, 'updateProducto').mockImplementation((req, res) => res.json({ message: "Producto Actualizado Correctamente" }));
+        jest.spyOn(productoController, 'updateProducto').mockImplementation((req, res) => 
+            res.json({ message: "Producto Actualizado Correctamente" })
+        );
 
         const response = await request(app).put('/producto').send({
             id: createdProductId,
@@ -77,7 +82,9 @@ describe('Producto Controller', () => {
 
     // Prueba para eliminar un producto
     test('should delete a product', async () => {
-        jest.spyOn(productoController, 'delProducto').mockImplementation((req, res) => res.json({ message: "Producto Eliminado Correctamente" }));
+        jest.spyOn(productoController, 'delProducto').mockImplementation((req, res) => 
+            res.json({ message: "Producto Eliminado Correctamente" })
+        );
 
         const response = await request(app).delete('/producto').send({ id: createdProductId });
         expect(response.status).toBe(200);
