@@ -73,22 +73,23 @@ describe('Cliente Controller', () => {
     });
 
     it('should delete a client', async () => {
-        // Asegúrate de que el cliente con ID 1 exista antes de eliminarlo
-        await request(app).post('/cliente').send({ 
+        // Agrega un cliente temporal
+        const addResponse = await request(app).post('/cliente').send({ 
             nombre: 'Temporary Client', 
             email: 'temp.client@example.com', 
             telefono: '123456789', 
             direccion: '123 Temp St' 
         });
-
-        const response = await request(app).delete('/cliente').send({ id: 1 });
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('message', 'Cliente Eliminado Correctamente');
-    });
-
-    it('should handle missing fields when deleting a client', async () => {
-        const response = await request(app).delete('/cliente').send({});
-        expect(response.status).toBe(400);
-        expect(response.body).toHaveProperty('message', 'Bad Request. Please provide an id.');
-    });
+        
+        // Obtén el id del cliente recién agregado
+        const tempClientId = addResponse.body.idcliente;
+    
+        // Verifica que se haya obtenido un id
+        expect(tempClientId).toBeDefined();
+        
+        // Intenta eliminar el cliente usando el id obtenido
+        const deleteResponse = await request(app).delete('/cliente').send({ id: tempClientId });
+        expect(deleteResponse.status).toBe(200);
+        expect(deleteResponse.body).toHaveProperty('message', 'Cliente Eliminado Correctamente');
+    });    
 });

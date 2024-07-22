@@ -19,7 +19,7 @@ const getOrden = async (req, res) => {
         const connection = await getConnection();
         const result = await connection.query("SELECT O.idorden, O.idcliente, P.nombre, D.cantidad, O.total, O.estado FROM orden O INNER JOIN detallesorden D ON O.idorden = D.idorden INNER JOIN producto P ON D.idproducto = P.idproducto WHERE O.idorden = ?", [id]);
         if (result.length === 0) return res.status(404).json({ message: "Orden no encontrada." });
-        res.json(result);
+        res.json(result[0]); // Retorna el primer elemento del array
     } catch (error) {
         res.status(500).send(error.message);
     }
@@ -63,7 +63,7 @@ const updateOrden = async (req, res) => {
         if (result.affectedRows === 0) return res.status(404).json({ message: "Orden no encontrada." });
         res.json({ message: "Estado de Orden Actualizado Correctamente" });
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).json({ message: error.message }); // Incluye el mensaje de error en la respuesta
     }
 };
 

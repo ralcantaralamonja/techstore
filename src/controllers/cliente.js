@@ -26,6 +26,7 @@ const getCliente = async (req, res) => {
 };
 
 // Agregar un nuevo cliente
+// Agregar un nuevo cliente
 const addCliente = async (req, res) => {
     try {
         const { nombre, email, telefono, direccion } = req.body;
@@ -35,8 +36,11 @@ const addCliente = async (req, res) => {
         }
 
         const connection = await getConnection();
-        await connection.query('INSERT INTO cliente (nombre, email, telefono, direccion) VALUES (?, ?, ?, ?)', [nombre, email, telefono, direccion]);
-        res.json({ message: "Cliente Registrado Correctamente" });
+        const result = await connection.query(`INSERT INTO cliente (nombre, email, telefono, direccion)
+                                                VALUES ('${nombre}', '${email}', '${telefono}', '${direccion}')`);
+        // Obtener el id del nuevo cliente
+        const idcliente = result.insertId;
+        res.json({ message: "Cliente Registrado Correctamente", idcliente });
         
     } catch (error) {
         res.status(500).send(error.message);

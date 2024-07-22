@@ -44,7 +44,7 @@ CREATE TABLE orden (
     idorden INT AUTO_INCREMENT PRIMARY KEY,
     idcliente INT,
     total DECIMAL(10, 2) NOT NULL,
-    estado VARCHAR(9) NOT NULL,
+    estado VARCHAR(255) NOT NULL,
     FOREIGN KEY (idcliente) REFERENCES cliente(idcliente)
 );
 

@@ -69,12 +69,22 @@ describe('Categoria Controller', () => {
     });
 
     it('should delete a category', async () => {
-        // Asegúrate de que la categoría con ID 1 exista antes de eliminarla
-        const responseAdd = await request(app).post('/categoria').send({ nombre: 'Temporary Category', descripcion: 'Temporary description' });
+        // Primero, añade una categoría para poder eliminarla
+        const responseAdd = await request(app).post('/categoria').send({
+            nombre: 'Temporary Category',
+            descripcion: 'Temporary description'
+        });
         expect(responseAdd.status).toBe(200);
-
-        const response = await request(app).delete('/categoria').send({ id: 1 });
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('message', 'Categoría Eliminada Correctamente');
+    
+        // Obtén el ID de la categoría recién creada
+        const addedCategory = await request(app).get('/categorias');
+        const category = addedCategory.body.find(cat => cat.nombre === 'Temporary Category');
+        expect(category).toBeDefined(); // Verifica que la categoría se haya creado
+        const categoryId = category.idcategoria;
+    
+        // Luego, elimina la categoría usando el ID en el cuerpo de la solicitud
+        const responseDelete = await request(app).delete('/categoria').send({ id: categoryId }); // Usa el ID real aquí
+        expect(responseDelete.status).toBe(200);
+        expect(responseDelete.body).toHaveProperty('message', 'Categoría Eliminada Correctamente');
     });
 });

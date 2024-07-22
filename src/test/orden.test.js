@@ -29,7 +29,7 @@ describe('Orden Controller', () => {
     });
 
     it('should get an order by ID', async () => {
-        const mockOrder = [{ idorden: 1, idcliente: 1, nombre: 'Producto1', cantidad: 2, total: 100, estado: 'pendiente' }];
+        const mockOrder = { idorden: 1, idcliente: 1, nombre: 'Producto1', cantidad: 2, total: 100, estado: 'pendiente' };
         jest.spyOn(ordenMethods, 'getOrden').mockImplementation((req, res) => res.json(mockOrder));
 
         const response = await request(app).get('/orden/1');
@@ -59,15 +59,37 @@ describe('Orden Controller', () => {
     });
 
     it('should update an order', async () => {
-        jest.spyOn(ordenMethods, 'updateOrden').mockImplementation((req, res) => res.json({ message: "Estado de Orden Actualizado Correctamente" }));
-
+        jest.spyOn(ordenMethods, 'updateOrden').mockImplementation(async (req, res) => {
+            try {
+                const { id, estado } = req.body;
+    
+                if (!id || !estado) {
+                    return res.status(400).json({ message: "Bad Request. Please provide both id and estado." });
+                }
+    
+                // Verifica que el estado no exceda el tamaño permitido
+                if (estado.length > 255) {
+                    return res.status(400).json({ message: "Bad Request. Estado value too long." });
+                }
+    
+                // Simular respuesta exitosa de actualización
+                res.json({ message: "Estado de Orden Actualizado Correctamente" });
+            } catch (error) {
+                res.status(500).json({ message: "Error updating order: " + error.message });
+            }
+        });
+    
         const response = await request(app).put('/orden').send({
             id: 1,
             estado: 'completado'
         });
+    
+        console.log('Response Body:', response.body); // Agregar logs para depuración
+        console.log('Response Status:', response.status); // Agregar logs para depuración
+    
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('message', 'Estado de Orden Actualizado Correctamente');
-    });
+    });    
 
     it('should handle missing fields when updating an order', async () => {
         const response = await request(app).put('/orden').send({

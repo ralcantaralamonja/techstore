@@ -11,7 +11,7 @@ import cors from "cors";
 const app = express();
 
 //Settings
-app.set("port",3000);
+app.set("port",4000);
 
 //Middlewares
 app.use(morgan("dev"));
